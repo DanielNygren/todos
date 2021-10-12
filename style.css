@@ -1,0 +1,8 @@
+
+.active{
+    border: gray 2px solid;
+}
+
+.disable:hover{
+    border: gray 2px solid
+}
