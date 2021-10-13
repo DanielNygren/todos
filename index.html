@@ -10,38 +10,42 @@
 </head>
 <body>
     <header>
-        <h1>todos</h1>
-        <form action="input-container-form">
-            <div class="input-container">
-                <input type="text" name="input" placeholder="What to do?" autofocus>
-            </div>
-        </form>
+        <h1>todos</h1>       
     </header>
-    <section class="main">
-        <button id="check-all">select all</button>
-        <ul id="todo-list">
-        </ul>
-    </section>
-    <section class="footer">
-        <div>
-            <span id="counter">
-                <strong></strong>
-                 item left 
-            </span>
-            <ul class="filters">
-                <li class="active">
-                    <a id="all-items" href="#/">All</a>
-                </li>
-                <li class="disable">
-                    <a id="active-items" href="#/active">Active</a>
-                </li>
-                <li class="disable">
-                    <a id="completed-items" href="#/completed">Completed</a>
-                </li>
-            </ul>
-            <button class="clear-completed" type="button">Clear completed</button>
-        </div>
-    </section>
+    <div class="body">
+        <section class="header">
+            <button id="check-all">&#8249;</button>
+            <form action="input-container-form">
+                <div class="input-container">
+                    <input type="text" name="input" placeholder="What needs to be done?" autofocus>
+                </div>
+            </form>
+        </section>
+        <section class="main">
+            <div id="todo-list-container">
+                <ul id="todo-list">
+                </ul>
+            </div>
+        </section>
+        <section class="footer">
+                <span id="counter">
+                    <strong></strong>
+                     item left 
+                </span>
+                <ul class="filters">
+                    <li class="active" >
+                        <a id="all-items" href="#/">All</a>
+                    </li>
+                    <li class="disable">
+                        <a id="active-items" href="#/active">Active</a>
+                    </li>
+                    <li class="disable">
+                        <a id="completed-items" href="#/completed">Completed</a>
+                    </li>
+                </ul>
+                <button class="clear-completed" type="button">Clear completed</button>
+        </section>
+    </div>
 </body>
 <footer>
 
