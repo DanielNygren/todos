@@ -70,11 +70,11 @@ function createListItem(text, checked){
       });
     
     //Item Delete Butten
-    const itemDeleteButten = document.createElement("butten");
-    itemDeleteButten.className = "item-delete-butten";
+    const itemDeleteButten = document.createElement("button");
+    itemDeleteButten.className = "item-delete-button";
+    itemDeleteButten.type = "button"
     itemDeleteButten.textContent = "❌";
     itemDeleteButten.hidden = true;
-    
     //Events
     
     //Item Checkbox
@@ -268,6 +268,7 @@ function hiddenSections(){
     if(localStoregeList.length > 0){
         sectionMain.hidden = false;
         sectionFooter.hidden= false;
+        checkAllButton.style.visibility = "visible";
         sectionMain.style.shadow = "none";
     }
     else{
