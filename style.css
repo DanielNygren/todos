@@ -1,237 +1,289 @@
-*{
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    /*border: red 1px solid;*/
-}
-.active{
-    border: gray 1px solid;
-    border-radius: 5px;
-}
+const form = document.querySelector('form');
+const todoList = document.querySelector('#todo-list')
+const checkAllButton = document.querySelector('#check-all');
+const noteContainer = document.querySelector('#note-container');
+const inputContainer = document.querySelector('#input-container');
+const clearCompletedButton = document.querySelector('#clearCompletedButton');
+const localStorageList = [];
+const filter = document.querySelectorAll('.filters li');
+const itemsLeftLabel = document.querySelector('#counter');
+const sectionMain = document.querySelector('.main');
+const sectionFooter = document.querySelector('.footer');
 
-.disable{
-    border-radius: 5px;
-}
+//Load from Local Storage
+loadFromLocalStorage();
 
-.disable:hover{
-    border: gray 1px solid
-}
+form.onsubmit = event => {
+    event.preventDefault();
 
+    if (form.input.value != "") {
+        createListItem();
+    }
 
-html{
-    text-align: center;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #f5f5f5;
-    font-size: 14px;
-    line-height: 1.4rem;
-    min-width: 550px;
+    form.input.value = "";
+    saveToLocalStorage();
+
 }
 
-h1{
-    margin-top: 2rem;
-    font-size: 7rem;
-    line-height: 1;
-    font-weight: normal;
-    margin-bottom: 1rem;
-    color: rgba(175, 47, 47, 0.15);
-}
+//Create a 'li' for each added task and add to the HTML ul
+function createListItem(text, checked) {
 
-.body{
-    box-shadow: 0 2px 4px 0 rgb(0 0 0 / 20%), 0 25px 50px 0 rgb(0 0 0 / 10%);
-    background-color: white;
-    width: 100%;
-    max-width: 550px;
-    min-width: 550px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.header{
-    display: grid;
-    grid-template-columns: 12% auto;
-    box-shadow: 0 2px 2px 1px rgba(161, 160, 160, 0.3);
-}
-
-.header form{
-    grid-column: 2;
-}
-
-.input-container{
-    padding: 15px;
-}
-
-.input-container input{
-    border-style: none;
-    justify-self: stretch;
-    text-align: left;
-    font-size: 1.8rem;
-    font-style: italic;
-    opacity: 0.2;
-    justify-self: start;
-    width: 100%;
-    height: 100%;
-}
-
-.input-container input:focus{
+    const todoItem = document.createElement('li');
+    todoItem.onmouseenter = event => {
+        itemDeleteButton.hidden = false;
+    }
+    todoItem.onmouseleave = event => {
+        itemDeleteButton.hidden = true;
+    }
     
-    outline: none;
-    opacity: 0.7;
-}
+    //Checkbox
+    const itemCheckbox = document.createElement('input');;
+    itemCheckbox.type = "checkbox";
+    itemCheckbox.className = "checkbox-round";
 
-#check-all{
-    grid-column: 1;
-    border: none;
-    background-color: transparent;
-    transform: rotate(-90deg);
-    font-size: 3rem;
-    font-stretch: wider;
-    color:  rgb(161, 160, 160);
-    grid-column: 1;
-    justify-self: center;
-    margin-top: auto;
-    margin-bottom: auto;
-    grid-column: 1;
-}
+    try {
+        if (checked == "checked") {
+            itemCheckbox.checked = true;
+            todoItem.className = "checked";
+        }
+    }
+    catch { }
 
-#todo-list-container{
-    border-bottom: 1px solid rgba(161, 160, 160, 0.3);
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-}
+    //Text input
+    const itemLabel = document.createElement('label');
 
-#todo-list li{
-    display: grid;
-    grid-template-columns: 10% 80% 10%;
-    margin: 10px;
-    text-align: left;
-    font-size: 1.8rem;
-    color:rgb(39, 38, 38);
-    
-}
+    if (text) {
+        itemLabel.textContent = text;
+    }
+    else {
+        itemLabel.textContent = form.input.value;
+    }
 
-#todo-list li input[type="text"]{
-    grid-column: 2;
-    font-size: 1.8rem;
-    opacity: 0.5;
-    border: none;
-    margin-top: auto;
-    margin-bottom: auto;
-}
+    //Edit text input
+    const itemLabelEdit = document.createElement('input');
+    itemLabelEdit.className = 'edit';
+    itemLabelEdit.type = 'text';
+    itemLabelEdit.hidden = true;
 
-#todo-list li label{
-    grid-column: 2;
-    font-size: 1.8rem;
-    opacity: 0.5;
-    border: none;
-    margin-top: auto;
-    margin-bottom: auto;
-}
+    //Button
+    const itemDeleteButton = document.createElement('button');
+    itemDeleteButton.className = 'item-delete-button';
+    itemDeleteButton.textContent = '❌';
+    itemDeleteButton.hidden = true;
 
-#todo-list li input[type="checkbox"]{
-    grid-column: 1;
-    border-radius: 50%;
-    margin-top: auto;
-    margin-bottom: auto;
-    justify-self: center;
-    width: 2.2em;
-    height: 2.2em;
-    background-color: white;
-    border-radius: 50%;
-    vertical-align: middle;
-    border: 1px solid #ddd;
-    appearance: none;
-    -webkit-appearance: none;
-    outline: none;
-    cursor: pointer;
-}
+    //Events
+    itemCheckbox.onchange = event => {
+        if (itemCheckbox.checked == true) {
+            todoItem.className = 'checked';
+        }
+        else {
+            todoItem.className = '';
+        }
+        saveToLocalStorage();
+    }
 
-li button{
-    grid-column: 3;
-    background-color: transparent;
-    border: none;
-    border-radius: 50%;
-    opacity: 0.5; 
-}
+    itemDeleteButton.onclick = event => {
+        todoItem.remove();
+        deleteItemInList(todoItem);
+        saveToLocalStorage();
+    }
 
+    itemLabel.ondblclick = event => {
+        itemLabel.hidden = true;
+        itemLabelEdit.hidden = false;
+        itemLabelEdit.value = itemLabel.textContent;
+        itemLabelEdit.focus();
+    }
 
-#todo-list li input[type="checkbox"]:checked{
-    border: 1px solid green;
-    opacity: 0.5;
-}
+    itemLabelEdit.addEventListener('focusout', (event) => {
+        itemLabel.textContent = itemLabelEdit.value;
+        itemLabelEdit.hidden = true;
+        itemLabel.hidden = false;
+        saveToLocalStorage();
+    });
 
-#todo-list li input[type="checkbox"]:checked:after{
-    content: "✔";
-    position: relative;
-    left: 5px;
-    bottom: 2px;
-    font-size: 1.5rem;
-    color: green;
-}
+    itemLabelEdit.onkeydown = event => {
+        if (event.key == 'Enter') {
+            itemLabel.textContent = itemLabelEdit.value;
+            itemLabelEdit.hidden = true;
+            itemLabel.hidden = false;
+            saveToLocalStorage();
+        }
+    }
 
-.checked label{
-    text-decoration:line-through;
-    color: rgb(77, 77, 77, 0.4);
-}
-.footer{
-    box-shadow:
-    /* The top layer shadow */
-    0 1px 1px rgba(0,0,0,0.15),
-    /* The second layer */
-    0 10px 0 -5px #eee,
-    /* The second layer shadow */
-    0 10px 1px -4px rgba(0,0,0,0.15),
-     /* The third layer */
-    0 20px 0 -10px #eee,
-    /* The third layer shadow */
-    0 20px 1px -9px rgba(0,0,0,0.15);
-    height: 50px;
-}
-.footer{
-    color: rgb(77, 77, 77);
-}
-#counter{
-    color: rgb(77, 77, 77);
-    float: left;
-    padding: 5px;
-    margin: 5px;
-    margin-right: 75px;
+    todoItem.appendChild(itemCheckbox);
+    todoItem.appendChild(itemLabel);
+    todoItem.appendChild(itemLabelEdit);
+    todoItem.appendChild(itemDeleteButton);
+    todoList.appendChild(todoItem);
+
+    localStorageList.push(todoItem);
 
 }
 
-.footer li{
-    float: left;
-    padding: 5px;
-    margin: 5px;
-    line-height: normal;
-    opacity: 0.7;
-    list-style: none;
-    align-self: center;
+//Check / Uncheck all list items
+checkAllButton.onclick = event => {
+
+    let items = todoList.getElementsByTagName("li");
+    let itemsChecked = [];
+
+    for (let i = 0; i < items.length; i++) {
+
+        if (items[i].className == "checked") {
+
+            itemsChecked.push(items[i])
+        }
+    }
+    if (itemsChecked.length == items.length) {
+
+        for (let i = 0; i < items.length; i++) {
+
+            let cb = items[i].firstElementChild;
+            cb.click();
+        }
+    }
+    else {
+        for (let i = 0; i < items.length; i++) {
+
+            if (items[i].className != "checked") {
+                let cb = items[i].firstElementChild;
+                cb.click();
+            }
+        }
+    }
+
 }
 
-.footer li a{
-    background-color: transparent;
-    color: inherit;
-    border: none;
-    padding: 5px;
-    margin: 5px;
-    text-decoration: none;
+//Delete from Local Storage List
+function deleteItemInList(todoItem) {
+    const index = localStorageList.indexOf(todoItem);
+    localStorageList.splice(index, 1);
+
 }
 
-.clear-completed{
-    color: rgb(77, 77, 77);
-    float: right;
-    padding: 5px;
-    margin: 5px;
-    border: none;
-    background-color: transparent;
-}
-.clear-completed:hover{
-    text-decoration: underline;
+//Save to Local Storage List
+function saveToLocalStorage() {
+    localStorage.clear();
+    let string = "";
+    for (let i = 0; i < localStorageList.length; i++) {
+
+        string = localStorageList[i].textContent + localStorageList[i].className;
+        localStorage.setItem(i, string);
+    }
+
+    itemsLeftCounter();
+    hiddenSections();
 }
 
-footer{
-    margin-top: 6rem;
-    color: #ccc8c8;
-    font-size: 0.75rem;
-    text-align: center;
+//Load from Local Storage List
+function loadFromLocalStorage() {
+    for (let i = 0; i < localStorage.length; i++) {
+
+        let item = localStorage.getItem(i);
+        let value = item.split('❌');
+        createListItem(value[0], value[1]);
+    }
 }
+
+//Update URL
+window.addEventListener('hashchange', hashChanged, false);
+hashChanged();
+
+function hashChanged() {
+    if(location.hash === "#/"){
+        hiddenItem("grid", "checked")
+        hiddenItem("grid", "")
+        filter[0].className = "active"
+        filter[1].className = "disabled";
+        filter[2].className = "disabled";
+    }
+    if(location.hash === "#/active"){
+        hiddenItem("none", "checked");
+        hiddenItem("grid", "")
+        filter[0].className = "disabled"
+        filter[1].className = "active"
+        filter[2].className = "disabled"
+
+    }
+    if(location.hash === "#/completed"){
+        hiddenItem("none", "")
+        hiddenItem("grid", "checked")
+        filter[0].className = "disabled"
+        filter[1].className = "disabled"
+        filter[2].className = "active"
+    }
+}
+
+//Show / Hide listitems as Hash changes
+function hiddenItem(h, state){
+    const todoListItem = document.querySelectorAll("#todo-list li")
+    for(let i = 0; i < todoListItem.length; i++){
+        if(todoListItem[i].className === state){
+            todoListItem[i].style.display = h
+        }
+    }
+}
+
+//Clear all checked items when "clear completed button" is clicked
+clearCompletedButton.onclick = event => {
+
+    const items = todoList.getElementsByTagName("li");
+    for (let i = items.length; i >= 0; i--) {
+        try {
+            if (items[i].className == "checked") {
+                localStorageList.splice(i, 1);
+                todoList.removeChild(items[i]);
+            }
+        }
+        catch {
+        }
+    }
+    clearCompletedButton.hidden = true;
+    saveToLocalStorage();
+}
+
+//Checks how many items are left for "items left" label, and hides/shows clearCompletedButton
+function itemsLeftCounter() {
+
+    const items = todoList.getElementsByTagName("li");
+    clearCompletedButton.hidden = true;
+    let taskNumber = 0;
+
+    for (let i = 0; i < items.length; i++) {
+
+        const cb = items[i].firstElementChild;
+
+        if (cb.checked == true) {
+            clearCompletedButton.hidden = false;
+        }
+        else {
+            taskNumber++;
+        }
+    }
+    itemsLeftLabel.textContent = taskNumber + ' items left'
+
+    if (taskNumber === 0) {
+        checkAllButton.style.opacity = '1';
+    }
+    else {
+        checkAllButton.style.opacity = '0.2';
+    }
+}
+itemsLeftCounter();
+
+//Show only the input-container and hide rest of the "Container" when there are no items in list
+function hiddenSections(){
+    if(localStorageList.length > 0){
+        sectionMain.hidden = false;
+        sectionFooter.hidden= false;
+        checkAllButton.style.visibility = "visible";
+        sectionMain.style.shadow = "none";
+    }
+    else{
+        sectionMain.hidden = true;
+        sectionFooter.hidden= true;
+        checkAllButton.style.visibility = "hidden";
+
+    }
+}
+hiddenSections();
