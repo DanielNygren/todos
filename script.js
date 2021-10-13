@@ -240,13 +240,13 @@ cearCompleted.onclick = event => {
 function itemsLeftCounter(){
     const todoListItem = document.querySelectorAll("#todo-list li")
     let itemsChecked = 0;
-    const itemsLeft = document.querySelector("#counter strong")
+    const itemsLeft = document.querySelector("#counter")
     for (let i = 0; i < todoListItem.length; i++) {
         if(todoListItem[i].className != "checked"){
             itemsChecked++
         }
     }
-    itemsLeft.textContent = itemsChecked
+    itemsLeft.textContent = itemsChecked + " items left"
 
     if(itemsChecked == 0){
         checkAllButton.style.opacity = "1"
