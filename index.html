@@ -1,50 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDoMVC</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
-    <title>TODOS</title>
+    <script src="main.js" defer></script>
 </head>
+
 <body>
     <header>
-        <h1>todos</h1>       
+        <h1>todos</h1>
     </header>
-    <div class="body">
-        <section class="header">
-            <button id="check-all">&#8249;</button>
-            <form action="input-container-form">
-                <div class="input-container">
-                    <input type="text" name="input" placeholder="What needs to be done?" autofocus>
-                </div>
-            </form>
-        </section>
-        <section class="main">
-            <div id="todo-list-container">
-                <ul id="todo-list">
-                </ul>
+    <main>
+        <div class="body">
+            <div id="note-container">
+                <section class="header">
+                    <button type="button" name="check-all" id="check-all">&#8249;</button>
+                    <form>
+                        <div id="input-container">
+                            <input type="text" name="input" id="textinput" placeholder="What needs to be done?">
+                        </div>
+                    </form>
+                </section>
+
+                <section class="main">
+                    <div id="todo-list-container">
+                        <ul id="todo-list"></ul>
+                    </div>
+                </section>
+
+                <section class="footer">
+                    <div id="info-container">
+                        <label id="counter" value="0 items left">0 items left</label>
+                        <ul class="filters">
+                            <li class="active">
+                                <a href="#/" id="allItems">All</a>
+                            </li>
+                            <li class="disabled">
+                                <a href="#/active" id="activeItems">Active</a>
+                            </li>
+                            <li class="disabled">
+                                <a href="#/completed" id="completed-items" class="disabled">Completed</a>
+                            </li>
+                        </ul>
+                        <button type="button" id="clearCompletedButton">Clear completed</button>
+                    </div>
+                </section>
             </div>
-        </section>
-        <section class="footer">
-                <label id="counter" value= "items left">0 items left</label>
-                <ul class="filters">
-                    <li class="active" >
-                        <a id="all-items" href="#/">All</a>
-                    </li>
-                    <li class="disable">
-                        <a id="active-items" href="#/active">Active</a>
-                    </li>
-                    <li class="disable">
-                        <a id="completed-items" href="#/completed">Completed</a>
-                    </li>
-                </ul>
-                <button class="clear-completed" type="button">Clear completed</button>
-        </section>
-    </div>
+        </div>
+    </main>
 </body>
 <footer>
-
+    <p>Double click to edit a todo</p>
+    <p>Inspired by Addy Osman, created by Amanda & Daniel</p>
+    <p>Part of ToDoMVC</p>
 </footer>
+
 </html>
