@@ -6,21 +6,15 @@ const sectionMain = document.querySelector(".main");
 const sectionFooter = document.querySelector(".footer");
 const cearCompleted = document.querySelector(".clear-completed");
 const filter = document.querySelectorAll(".filters li");
+const main = document.querySelector(".main");
 const localStoregeList = [];
 
 //Load From Local Storege
 loadFromLocalStorege();
 
-/*
-if(localStoregeList > 0){
-    sectionMain.style.visibility = "visible";
-    sectionFooter.style.shadow = "none";
-}
-else{
-    noteContainer.style.visibility = 'hidden';
-    inputContainer.style.visibility = 'visible';
-}
-*/
+
+
+
 form.onsubmit = event => {
     event.preventDefault();
 
@@ -35,10 +29,15 @@ form.onsubmit = event => {
 function createListItem(text, checked){
 
     const todoItem = document.createElement("li");
-    
+    todoItem.onmouseenter = event =>{
+        itemDeleteButten.hidden = false;
+    }
+    todoItem.onmouseleave = event =>{
+        itemDeleteButten.hidden = true;
+    }
     //Checkbox
     const itemCheckbox = document.createElement("input");
-    itemCheckbox.className = "list-checked"
+    itemCheckbox.className = "checkbox-round"
     itemCheckbox.type = "checkbox";
     try{
         if(checked == "checked"){
@@ -74,6 +73,7 @@ function createListItem(text, checked){
     const itemDeleteButten = document.createElement("butten");
     itemDeleteButten.className = "item-delete-butten";
     itemDeleteButten.textContent = "❌";
+    itemDeleteButten.hidden = true;
     
     //Events
     
@@ -167,6 +167,7 @@ function saveToLocalStorege(){
     }
 
     itemsLeftCounter();
+    hiddenSections();
 }
 
 //Load Form Local Storege
@@ -186,23 +187,23 @@ hashCanged();
 //Hash Canged Check Function
 function hashCanged(){
     if(location.hash === "#/"){
-        hiddenItem(false, "checked")
-        hiddenItem(false, "")
+        hiddenItem("grid", "checked")
+        hiddenItem("grid", "")
         filter[0].className = "active"
         filter[1].className = "disable";
         filter[2].className = "disable";
     }
     if(location.hash === "#/active"){
-        hiddenItem(true, "checked");
-        hiddenItem(false, "")
+        hiddenItem("none", "checked");
+        hiddenItem("grid", "")
         filter[0].className = "disable"
         filter[1].className = "active"
         filter[2].className = "disable"
 
     }
     if(location.hash === "#/completed"){
-        hiddenItem(true, "")
-        hiddenItem(false, "checked")
+        hiddenItem("none", "")
+        hiddenItem("grid", "checked")
         filter[0].className = "disable"
         filter[1].className = "disable"
         filter[2].className = "active"
@@ -210,10 +211,11 @@ function hashCanged(){
 }
 
 //Hash Canged Viseble Result Function
-function hiddenItem(value, checked){
-    for(let i = 0; i < localStoregeList.length; i++){
-        if(localStoregeList[i].className === checked){
-            localStoregeList[i].hidden = value
+function hiddenItem(h, state){
+    const todoListItem = document.querySelectorAll("#todo-list li")
+    for(let i = 0; i < todoListItem.length; i++){
+        if(todoListItem[i].className === state){
+            todoListItem[i].style.display = h
         }
     }
 }
@@ -245,5 +247,32 @@ function itemsLeftCounter(){
         }
     }
     itemsLeft.textContent = itemsChecked
+
+    if(itemsChecked == 0){
+        checkAllButton.style.opacity = "1"
+    }
+    else{
+        checkAllButton.style.opacity = "0.2"
+    }
+    if((todoListItem.length - itemsChecked)  > 0){
+        cearCompleted.hidden = false;
+    }
+    else{
+        cearCompleted.hidden = true;
+    }
+
 }
 itemsLeftCounter();
+
+function hiddenSections(){
+    if(localStoregeList.length > 0){
+        sectionMain.hidden = false;
+        sectionFooter.hidden= false;
+        sectionMain.style.shadow = "none";
+    }
+    else{
+        sectionMain.hidden = true;
+        sectionFooter.hidden= true;
+    }
+}
+hiddenSections();
